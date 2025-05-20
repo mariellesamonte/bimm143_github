@@ -1,0 +1,188 @@
+---
+title: "Class 6: R functions"
+author: "Marielle Samonte (PID: A16861951)"
+format: pdf
+toc: true
+---
+## 1. Function basics 
+
+Let's start writing our first silly function to add some numbers:
+
+Every R function has 3 things:
+
+- name (we get to pick this)
+- input arguments (there can be loads of these separated by a comma)
+- the body (the R code that does the work)
+
+```{r}
+add <- function(x, y=10, z=0){
+  x + y + z
+}
+```
+
+I can just use this function like any other function as long as R knows about it (i.e. run the code chunk)
+
+```{r}
+add(1, 100)
+```
+
+```{r}
+add( x=c(1,2,3,4), y =100)
+```
+
+```{r}
+add(1)
+```
+
+Functions can have "required" input arguments and "optional" input arguments. The optional arguments are defined with an equals default value (`y=10`) in the function defination. 
+
+```{r}
+add(x=1,y=100,z=10)
+```
+
+> Q. Write a function to return a DNA sequence of a user specified length. Call it `generate_dna()`
+
+The `sample()` function can help here
+```{r}
+#generate_dna <- function(size=5){ }
+
+students <- c("jeff", "jeremy", "peter")
+
+sample(students, size = 5, replace = TRUE)
+```
+
+## 2. Generate DNA sequence
+
+Now work with `bases` rather than `students`
+
+```{r}
+bases <- c("A","C", "G", "T")
+sample(bases, size = 10, replace = TRUE)
+```
+
+Now I have a working 'snippet' of code T can use this as the body of my first function version here:
+
+```{r}
+generate_dna <- function(size=5) { 
+  bases <- c("A","C", "G", "T")
+  sample(bases, size = size, replace = TRUE)
+  }
+```
+
+```{r}
+generate_dna()
+```
+
+I want the ability to return a sequence like "AGTACCTG" i.e. a one element vector where the bases are all together.
+
+```{r}
+generate_dna <- function(size=5, together=TRUE) { 
+  bases <- c("A","C", "G", "T")
+  sequence <- sample(bases, size = size, replace = TRUE)
+  
+  if(together) { 
+    sequence <- paste(sequence, collapse = "")
+  }
+  return(sequence)
+}
+```
+
+```{r}
+generate_dna()
+```
+
+```{r}
+generate_dna(together = F)
+```
+
+## 3. Generate Protein Function
+
+> Q. Write a protein sequence generating function that will return sequences of a user specified length?
+
+We can get the set of 20 natural amino-acids from the **bio3d** package.
+
+```{r}
+aa <- bio3d::aa.table$aa1[1:20]
+```
+
+```{r}
+generate_protein <- function(size=6, together=TRUE) {
+  
+  ##Get the 20 amino acids as a vector
+  aa <- bio3d::aa.table$aa1[1:20]
+  sequence <- sample(aa, size = size, replace = TRUE)
+  
+  ## Optionally return a single element string
+  if(together) {
+    sequence <- paste(sequence, collapse = "")
+  }
+  return(sequence)
+}
+```
+
+```{r}
+generate_protein()
+```
+
+> Q. Generate random protein sequences of length 6 to 12 amino acids.
+
+```{r}
+generate_protein(7)
+generate_protein(8)
+generate_protein(9)
+```
+
+```{r}
+# generate_protein(size=6:12)
+```
+
+We can fix this inability to generate multiple sequences by either editing and adding to the function body code (e.g. a for loop) or by using the R **apply** family of utility functions.
+
+```{r}
+sapply(6:12, generate_protein)
+```
+
+It would be cool and useful if I could get FASTA format output
+
+```{r}
+ans <- sapply(6:12, generate_protein)
+ans
+```
+
+```{r}
+cat(ans, sep="\n")
+```
+
+I want this to look like FASTA format with an ID line. e.g.
+
+```
+>ID.6
+YYKMTW
+>ID.7
+ERFAPFW
+>ID.8
+RYYCSTLL
+```
+The functions `paste()` and `cat()` can help us here...
+
+```{r}
+cat(paste(">ID.", 6:12, "\n", ans, sep=""), sep="\n")
+```
+
+```{r}
+id.line <- paste(">ID.", 6:12, sep="")
+id.line
+```
+
+```{r}
+id.line <- paste(">ID.", 6:12, sep="")
+seq.line <- paste(id.line, ans, sep="\n")
+cat(seq.line, sep="\n", file ="myseq.fa")
+```
+
+
+> Q. Determine if these sequences can be found in nature or are they unique 
+
+I BLASTp searched my FASTA format sequences against NR and found that length 6, 7, 8 are not unique and can be found in the databases with 100% coverage and 100% identity.
+
+Random sequences of length 9 and above are unique and can't be found in the databases.
