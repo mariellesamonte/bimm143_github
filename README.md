@@ -1,7 +1,7 @@
 # BIMM143
 My classwork from [BIMM143 S25](https://bioboot.github.io/bimm143_S25/) at UC San Diego
 
-- 04 [Intro to R]()
+- 04 [Intro to R](https://github.com/mariellesamonte/bimm143_github/blob/main/class04/class04.md)
 
 - 05 Advanced graphics with **ggplot2**
 
@@ -17,9 +17,9 @@ My classwork from [BIMM143 S25](https://bioboot.github.io/bimm143_S25/) at UC Sa
 
 - 11 [Comparative Structure Analysis](https://github.com/mariellesamonte/bimm143_github/blob/main/class10/class11.qmd)
 
-- 12 [Genome Informatics and High Throughput Sequencing]()
+- 12 [Genome Informatics and High Throughput Sequencing](/class12/class12.md)
 
-- 13
+- 13 [Transcriptomics and RNA-Seq Analysis](https://github.com/mariellesamonte/bimm143_github/blob/main/class13/class13.md)
 
 - 14
 
