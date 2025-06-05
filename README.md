@@ -15,5 +15,23 @@ My classwork from [BIMM143 S25](https://bioboot.github.io/bimm143_S25/) at UC Sa
 
 - 10 [Structural Bioinformatics 1](https://github.com/mariellesamonte/bimm143_github/blob/main/class10/class10.md)
 
-- 11
+- 11 [Comparative Structure Analysis](https://github.com/mariellesamonte/bimm143_github/blob/main/class10/class11.qmd)
+
+- 12 [Genome Informatics and High Throughput Sequencing]()
+
+- 13
+
+- 14
+
+- 15
+
+- 16
+
+- 17
+
+- 18
+
+- 19
+
+- 20
   
