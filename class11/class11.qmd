@@ -1,0 +1,86 @@
+---
+title: "Class 11: Comparative structure analysis"
+author: "Marielle Samonte (A16861951)"
+format: pdf
+
+---
+
+Load up the packages we will need for analysis of protein structure sets.
+```{r}
+library(bio3d)
+```
+
+We will analyze the ADK starting with a single ADK database accession code: "1ake_A"
+
+```{r}
+id <- "1ake_A"
+aa <- get.seq(id)
+aa
+```
+
+> Q. Q13. How many amino acids are in this sequence, i.e. how long is this sequence?
+
+214 amino acids
+
+Now we can search the PDB database to find all related enteries. 
+```{r}
+blast <- blast.pdb(aa)
+```
+
+```{r}
+attributes(blast)
+```
+```{r}
+head(blast$hit.tbl)
+```
+
+Make a little summary figure of these results: 
+```{r}
+hits <- plot(blast)
+```
+
+Our "top hits" i.e. the most similar enteries in the database are:
+```{r}
+hits$pdb.id
+```
+
+```{r}
+# Download releated PDB files
+files <- get.pdb(hits$pdb.id, path="pdbs", split=TRUE, gzip=TRUE)
+```
+
+Align and superimpose all these structures
+```{r}
+# Align releated PDBs
+pdbs <- pdbaln(files, fit = TRUE, exefile="msa")
+```
+
+Side-note: 
+```{r}
+library(bio3dview)
+
+#view.pdbs(pdbs)
+```
+
+This is better but still difficult to see what is similar and different in all these structures or indeed learn much about how this family works.
+
+Let's try PCA:
+```{r}
+pc <- pca(pdbs)
+plot(pc)
+```
+
+```{r}
+plot(pc, pc.axes = 1:2)
+```
+
+```{r}
+#view.pca(pc)
+```
+
+Write a PDB "trajectory" for mol-star
+```{r}
+mktrj(pc, file="pca_results.pdb")
+```
+
+
