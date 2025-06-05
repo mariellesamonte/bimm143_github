@@ -1,0 +1,117 @@
+---
+title: "Class 11: AlphaFold"
+author: "Marielle Samonte (A16861951)"
+format: pdf
+---
+
+Here we read the results from AlphaFold and try to interpret all the models and quality score metrics:
+
+```{r}
+library(bio3d)
+
+pth <- "dimer_23119"
+pdb.files <- list.files(path = pth, full.names = TRUE, pattern = ".pdb")
+```
+
+Align and supperpose all these models
+```{r}
+file.exists(pdb.files)
+```
+
+```{r}
+pdbs <- pdbaln(pdb.files, fit = TRUE, exefile = "msa")
+```
+```{r}
+library(bio3dview)
+#view.pdbs(pdbs)
+```
+
+```{r}
+plot(pdbs$b[1,], typ = "l", ylim = c(0,100), ylab = "pLDDT score")
+lines(pdbs$b[2,], typ = "l", col = "blue")
+lines(pdbs$b[3,], typ = "l", col = "green")
+lines(pdbs$b[4,], typ = "l", col = "orange")
+lines(pdbs$b[5,], typ = "l", col = "red")
+```
+```{r}
+rd <- rmsd(pdbs)
+rd
+
+library(pheatmap)
+
+colnames(rd) <- paste0("m",1:5)
+rownames(rd) <- paste0("m",1:5)
+pheatmap(rd)
+```
+
+```{r}
+aln_file <- list.files(path=pth,
+                       pattern=".a3m$",
+                        full.names = TRUE)
+aln_file
+```
+```{r}
+aln <- read.fasta(aln_file[1], to.upper = TRUE)
+```
+```{r}
+dim(aln$ali)
+```
+
+```{r}
+sim <- conserv(aln)
+plotb3(sim[1:99],
+       ylab="Conservation Score")
+```
+
+Find the consensus sequence at a very high cut-off to find invariant residues
+
+```{r}
+con <- consensus(aln, cutoff = 0.9)
+con$seq
+```
+
+```{r}
+m1.pdb <- read.pdb(pdb.files[1])
+occ <- vec2resno(c(sim[1:99], sim[1:99]), m1.pdb$atom$resno)
+write.pdb(m1.pdb, o=occ, file="m1_conserv.pdb")
+```
+
+
+# Predicted Alignment Error for domains
+
+```{r}
+library(jsonlite)
+
+# Listing of all PAE JSON files
+pae_files <- list.files(path=pth,
+                        pattern=".*model.*\\.json",
+                        full.names = TRUE)
+pae_files
+```
+```{r}
+pae1 <- read_json(pae_files[1],simplifyVector = TRUE)
+pae5 <- read_json(pae_files[5],simplifyVector = TRUE)
+
+attributes(pae1)
+```
+
+```{r}
+plot.dmat(pae1$pae, 
+          xlab="Residue Position (i)",
+          ylab="Residue Position (j)")
+```
+```{r}
+plot.dmat(pae5$pae, 
+          xlab="Residue Position (i)",
+          ylab="Residue Position (j)",
+          grid.col = "black",
+          zlim=c(0,30))
+```
+```{r}
+plot.dmat(pae1$pae, 
+          xlab="Residue Position (i)",
+          ylab="Residue Position (j)",
+          grid.col = "black",
+          zlim=c(0,30))
+```
+
